@@ -1,0 +1,127 @@
+.page-container {
+  padding: 2rem 3rem;
+  color: white;
+}
+
+.section-header {
+  margin-bottom: 2rem;
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    .title-icon { color: var(--dz-accent, #00ef5a); }
+  }
+}
+
+.streams-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .list-header, .stream-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .list-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #a2a2ad;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    .col-time mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  }
+
+  .stream-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: background 0.15s ease;
+    &:hover { background: rgba(255, 255, 255, 0.07); border-radius: 4px; }
+  }
+
+  // --- COLONNES ---
+
+  .col-main {
+    flex: 3;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .col-album {
+    flex: 2;
+    color: #a2a2ad;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .col-duration {
+    width: 60px;
+    color: #a2a2ad;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .col-time {
+    width: 100px;
+    text-align: right;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+
+    .date-label {
+      color: #a2a2ad;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .time-value {
+      color: white;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.symbol-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  mat-icon { color: rgba(255, 255, 255, 0.9); font-size: 20px; }
+}
+
+.meta-info {
+  min-width: 0;
+  .song-title {
+    font-weight: 500;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .artist-name { font-size: 0.85rem; color: #a2a2ad; }
+}
+
+.spinner-container, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: #a2a2ad;
+}
+
+@media (max-width: 992px) {
+  .col-album { display: none; }
+}

@@ -1,0 +1,133 @@
+.detail-container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ==========================
+   HERO ARTIST HEADER
+========================== */
+.item-header {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 32px;
+  padding: 40px;
+  border-radius: var(--dz-radius-lg);
+  overflow: hidden;
+  background: linear-gradient(
+      to top,
+      rgba(18, 18, 22, 0.95) 10%,
+      rgba(18, 18, 22, 0.6) 60%,
+      rgba(18, 18, 22, 0.4) 100%
+    ),
+    var(--dz-surface);
+  transition: var(--dz-transition);
+
+  img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--dz-radius-md);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -1px;
+  }
+
+  p {
+    margin-top: 8px;
+    color: var(--dz-text-secondary);
+    font-size: 1rem;
+  }
+}
+
+/* ==========================
+   TRACKS SECTION
+========================== */
+.tracks-section {
+  margin-top: 40px;
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--dz-text-primary);
+  }
+}
+
+.tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.track-item {
+  display: grid;
+  grid-template-columns: 50px 2fr 2fr 1fr 1fr;
+  align-items: center;
+  padding: 14px 20px;
+  border-radius: var(--dz-radius-md);
+  background-color: var(--dz-surface);
+  transition: var(--dz-transition);
+  position: relative;
+
+  &:hover {
+    background-color: var(--dz-surface-hover);
+    transform: translateY(-2px);
+  }
+
+  .rank {
+    font-weight: 700;
+    color: var(--dz-text-secondary);
+  }
+
+  .title {
+    font-weight: 600;
+  }
+
+  .album {
+    font-size: 0.85rem;
+    color: var(--dz-text-secondary);
+  }
+
+  .count,
+  .time {
+    text-align: right;
+    color: var(--dz-text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.track-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--dz-accent);
+  border-radius: 0 0 var(--dz-radius-md) var(--dz-radius-md);
+  transition: width 0.4s ease;
+}
+
+.track-item:hover::after {
+  width: 100%;
+}
+
+/* ==========================
+   LOADING + EMPTY STATES
+========================== */
+mat-spinner {
+  display: block;
+  margin: 60px auto;
+}
+
+p {
+  color: var(--dz-text-secondary);
+}

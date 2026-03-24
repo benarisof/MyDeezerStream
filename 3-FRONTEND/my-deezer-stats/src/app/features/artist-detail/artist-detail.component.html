@@ -1,0 +1,36 @@
+<div class="detail-container">
+  <ng-container *ngIf="detail() as detailData; else loadingOrNotFound">
+    <header class="item-header">
+      <img *ngIf="detailData.coverUrl" [src]="detailData.coverUrl" [alt]="detailData.name">
+      <div>
+        <h1>{{ detailData.name }}</h1>
+        <p>Nombre d'écoutes: {{ detailData.count }}</p>
+        <p>Temps d'écoute total : {{ formatListeningTime(detailData.listeningTime) }}</p>
+      </div>
+    </header>
+
+    <section class="tracks-section">
+      <h2>Tracks</h2>
+      <div class="tracks-list">
+        <div *ngFor="let track of detailData.trackDtos; let i = index" class="track-item">
+          <span class="rank">#{{ i + 1 }}</span>
+          <span class="title">{{ track.name }}</span>
+          <span class="album">{{ track.album }}</span>
+          <span class="count">{{ track.count }} écoutes</span>
+        </div>
+
+        <p *ngIf="!detailData.trackDtos || detailData.trackDtos.length === 0">Aucun track trouvé.</p>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-template #loadingOrNotFound>
+    <ng-container *ngIf="loading(); else notFound">
+      <mat-spinner></mat-spinner>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #notFound>
+    <p>Artiste non trouvé.</p>
+  </ng-template>
+</div>

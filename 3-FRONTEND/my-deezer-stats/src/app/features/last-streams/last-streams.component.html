@@ -1,0 +1,62 @@
+<div class="page-container">
+  <header class="section-header">
+    <h2 class="section-title">
+      <mat-icon class="title-icon">history</mat-icon>
+      Dernières écoutes
+    </h2>
+  </header>
+
+  @if (loading()) {
+    <div class="spinner-container">
+      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    </div>
+  } @else {
+    <div class="streams-list">
+      <div class="list-header">
+        <div class="col-main">TITRE</div>
+        <div class="col-album">ALBUM</div>
+        <div class="col-duration">DURÉE</div>
+        <div class="col-time">
+          <mat-icon>schedule</mat-icon>
+        </div>
+      </div>
+
+      @for (stream of streams(); track $index) {
+        <div class="stream-item">
+          <div class="col-main">
+            <div class="symbol-wrapper" [style.background-color]="getColor($index)">
+              <mat-icon>music_note</mat-icon>
+            </div>
+            
+            <div class="meta-info">
+              <div class="song-title" [title]="stream.songTitle">{{ stream.songTitle }}</div>
+              <div class="artist-name">{{ stream.artist }}</div>
+            </div>
+          </div>
+
+          <div class="col-album">
+            {{ stream.albumTitle || '—' }}
+          </div>
+
+          <div class="col-duration">
+            {{ formatDuration(stream.listeningTime) }}
+          </div>
+
+          <div class="col-time">
+            <span class="date-label">
+              @if (isToday(stream.date)) { Aujourd'hui }
+              @else if (isYesterday(stream.date)) { Hier }
+              @else { {{ stream.date | date:'dd MMM' }} }
+            </span>
+            <span class="time-value">{{ stream.date | date:'HH:mm' }}</span>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon>history_toggle_off</mat-icon>
+          <p>Aucun historique récent trouvé.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

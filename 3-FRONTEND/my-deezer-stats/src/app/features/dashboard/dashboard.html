@@ -1,0 +1,78 @@
+<div class="dashboard-container">
+  @if (!isAuthenticated()) {
+    <div class="landing-container">
+      <div class="hero-card">
+        <div class="icon-circle">
+          <mat-icon>bar_chart</mat-icon>
+        </div>
+
+        <h2 class="hero-title">Vos statistiques Deezer attendent.</h2>
+        
+        <p class="hero-subtitle">
+          Connectez-vous pour transformer votre historique d'écoute en analyses visuelles détaillées.
+        </p>
+
+        <div class="feature-highlights">
+          <div class="feature">
+            <mat-icon>person</mat-icon>
+            <span>Artistes</span>
+          </div>
+          <div class="feature">
+            <mat-icon>album</mat-icon>
+            <span>Albums</span>
+          </div>
+          <div class="feature">
+            <mat-icon>audiotrack</mat-icon>
+            <span>Titres</span>
+          </div>
+        </div>
+
+        <div class="login-instruction">
+          <mat-icon>north_east</mat-icon>
+          <span>Cliquez sur "Se connecter" pour commencer</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (isAuthenticated()) {
+    <main class="dashboard-main">
+      <div class="sections-grid">
+        
+        @if (loading()) {
+          @for (section of [1,2,3]; track $index) {
+            <div class="skeleton-section">
+              <div class="skeleton-title"></div>
+              <div class="carousel-wrapper">
+                @for (item of [1,2,3,4,5]; track $index) {
+                  <div class="skeleton-card"></div>
+                }
+              </div>
+            </div>
+          }
+        } @else {
+          <app-top-list
+            type="artist"
+            [items]="artists()"
+            title="Top Artistes"
+            [limit]="10">
+          </app-top-list>
+
+          <app-top-list
+            type="album"
+            [items]="albums()"
+            title="Top Albums"
+            [limit]="10">
+          </app-top-list>
+
+          <app-top-list
+            type="track"
+            [items]="tracks()"
+            title="Top Titres"
+            [limit]="10">
+          </app-top-list>
+        }
+      </div>
+    </main>
+  }
+</div>

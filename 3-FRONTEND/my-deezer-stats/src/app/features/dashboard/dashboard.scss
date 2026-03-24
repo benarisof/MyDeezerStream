@@ -1,0 +1,199 @@
+:host {
+  /* Palette Deezer - Mise à jour avec couleurs officielles Deezer (rose/magenta comme accent principal) */
+  --dz-bg-dark: #050505;           
+  --dz-card-bg: #121214;           
+  --dz-accent-neon: #ee0050;       /* Rose Deezer classique remplace le vert */
+  --dz-accent-glow: rgba(238, 0, 80, 0.15); /* Glow rose adapté */
+  --dz-text-main: #ffffff;
+  --dz-text-muted: #88888c;
+  --dz-glass-border: rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-container {
+  min-height: 100vh;
+  background-color: var(--dz-bg-dark);
+  color: var(--dz-text-main);
+  font-family: 'Helvetica Neue', 'Arial', sans-serif; /* Police proche de Deezer (Mabry/Circular-like, fallback à Helvetica Neue) */
+}
+
+/* --- Section Landing (Non authentifié) --- */
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 2rem;
+  animation: slideUpFade 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-card {
+  max-width: 650px;
+  width: 100%;
+  background: var(--dz-card-bg);
+  border-radius: 32px;
+  padding: 4rem 3rem;
+  text-align: center;
+  border: 1px solid var(--dz-glass-border);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--dz-accent-glow) 0%, transparent 70%);
+    z-index: 0;
+  }
+
+  .icon-circle {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, rgba(238, 0, 80, 0.2), transparent); /* Adapté au rose */
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2.5rem;
+    border: 1px solid rgba(238, 0, 80, 0.3); /* Bordure rose */
+    
+    mat-icon {
+      font-size: 44px;
+      width: 44px;
+      height: 44px;
+      color: var(--dz-accent-neon);
+      filter: drop-shadow(0 0 10px var(--dz-accent-neon));
+    }
+  }
+
+.hero-title {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -1.5px;
+    background: linear-gradient(to bottom, #fff 40%, #666);
+    background-clip: text; 
+    -webkit-background-clip: text; 
+    color: transparent;             
+    -webkit-text-fill-color: transparent; 
+  }
+
+  .hero-subtitle {
+    color: var(--dz-text-muted);
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 3.5rem;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.feature-highlights {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 4rem;
+
+  .feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    
+    mat-icon { 
+      color: var(--dz-text-main);
+      font-size: 28px;
+    }
+
+    span { 
+      font-size: 0.75rem; 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      letter-spacing: 2px;
+      color: var(--dz-accent-neon);
+    }
+  }
+}
+
+.login-instruction {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 100px;
+  color: var(--dz-text-main);
+  font-weight: 500;
+  border: 1px solid var(--dz-glass-border);
+  transition: all 0.3s ease;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--dz-accent-neon);
+    animation: bounceDiagonal 2s infinite;
+  }
+}
+
+/* --- Styles du Dashboard (Identifié) --- */
+.dashboard-main { 
+  padding: 3rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sections-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* Skeletons Futuristes */
+.skeleton-section {
+  .skeleton-title {
+    width: 250px;
+    height: 32px;
+    background: linear-gradient(90deg, var(--dz-card-bg) 25%, #1e1e22 50%, var(--dz-card-bg) 75%);
+    background-size: 200% 100%;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    animation: shimmer 1.5s infinite linear;
+  }
+  .carousel-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    .skeleton-card {
+      flex: 0 0 280px;
+      height: 350px;
+      background: var(--dz-card-bg);
+      border-radius: 24px;
+      border: 1px solid var(--dz-glass-border);
+    }
+  }
+}
+
+/* Animations */
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceDiagonal {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(5px, -5px); }
+}
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 2rem; }
+  .feature-highlights { gap: 1.5rem; }
+}

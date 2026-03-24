@@ -1,0 +1,38 @@
+@use '../artist-detail/artist-detail.component.scss';
+// Ajustements spécifiques si nécessaire
+.item-header {
+  // On garde le même style, mais on retire la gestion de l'image
+  // car AlbumDetail ne contient pas encore coverUrl
+  background: linear-gradient(
+      to top,
+      rgba(18, 18, 22, 0.95) 10%,
+      rgba(18, 18, 22, 0.6) 60%,
+      rgba(18, 18, 22, 0.4) 100%
+    ),
+    var(--dz-surface);
+
+  .header-info {
+    width: 100%;
+  }
+
+  .artist-name {
+    font-size: 1.2rem;
+    color: var(--dz-text-secondary);
+    margin-top: 4px;
+  }
+}
+
+.track-item {
+  // On ajuste la grille pour les colonnes de l'album
+  grid-template-columns: 50px 3fr 1fr 1fr;
+
+  .album {
+    display: none; // On cache la colonne album (inutile ici)
+  }
+
+  .time {
+    text-align: right;
+    color: var(--dz-text-secondary);
+    font-size: 0.9rem;
+  }
+}

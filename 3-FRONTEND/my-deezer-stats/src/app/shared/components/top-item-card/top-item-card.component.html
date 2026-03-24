@@ -1,0 +1,48 @@
+<div class="dz-card" (click)="navigateToDetail()">
+
+  <!-- COVER -->
+  <div class="cover-wrapper">
+
+    <ng-container *ngIf="item?.coverUrl; else fallback">
+      <img [src]="item.coverUrl" [alt]="itemName" />
+    </ng-container>
+
+    <ng-template #fallback>
+      <div class="cover-fallback">
+        <mat-icon>{{ icon }}</mat-icon>
+      </div>
+    </ng-template>
+
+    <!-- Rank badge -->
+    <div class="rank-badge">
+      #{{ rank }}
+    </div>
+
+    <!-- Play button -->
+    <button class="play-btn" (click)="$event.stopPropagation()">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+
+    <!-- Gradient overlay -->
+    <div class="cover-overlay"></div>
+
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <div class="item-name" [title]="itemName">
+      {{ itemName }}
+    </div>
+
+    <div *ngIf="subName" class="item-sub" [title]="subName">
+      {{ subName }}
+    </div>
+
+    <div class="item-count">
+      {{ item?.count }} écoutes
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,17 @@
+# .NET
+bin/
+obj/
+
+# VS / Rider
+.vs/
+*.user
+
+# Node / Angular
+node_modules/
+
+# Env / secrets
+.env
+*.env
+
+# Docker
+postgres_data/

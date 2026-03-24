@@ -1,0 +1,112 @@
+@use '@angular/material' as mat;
+
+// --- CONFIGURATION DU THÈME DEEZER ---
+:root {
+  // Couleurs signatures
+  --dz-bg-dark: #121216;
+  --dz-surface: #191922;
+  --dz-surface-hover: #23232D;
+  --dz-accent: #A238FF; // Le violet "Deezer"
+  --dz-text-primary: #FFFFFF;
+  --dz-text-secondary: #A2A2AD;
+  
+  // Bordures et Arrondis
+  --dz-radius-lg: 16px;
+  --dz-radius-md: 12px;
+  --dz-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+html {
+  height: 100%;
+  // On configure Material 3 avec les palettes sombres
+  @include mat.theme((
+    color: (
+      primary: mat.$violet-palette, // On utilise le violet comme couleur primaire
+      tertiary: mat.$magenta-palette,
+      theme-type: dark, // Force le mode sombre pour les composants Material
+    ),
+    typography: (
+      brand-family: 'Inter, Roboto, sans-serif',
+      plain-family: 'Inter, Roboto, sans-serif',
+    ),
+    density: -1, // Un peu plus compact pour un look "App"
+  ));
+}
+
+body {
+  // On force le mode sombre au niveau du navigateur
+  color-scheme: dark;
+
+  // Background Deezer (Noir très légèrement bleuté)
+  background-color: var(--dz-bg-dark);
+  color: var(--dz-text-primary);
+  font-family: 'Inter', Roboto, sans-serif;
+
+  margin: 0;
+  height: 100%;
+}
+
+// --- SURCHARGES GLOBALES POUR L'ESTHÉTIQUE DEEZER ---
+
+// Rendre les champs de saisie (Select) plus discrets
+.mat-mdc-form-field {
+  --mdc-filled-tonal-container-color: var(--dz-surface);
+  --mdc-outlined-text-field-container-color: var(--dz-surface);
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.1);
+  --mdc-outlined-text-field-focus-outline-color: var(--dz-accent);
+  
+  .mdc-text-field--outlined {
+    border-radius: 20px !important; // Coins très arrondis comme Deezer
+  }
+}
+
+// Personnalisation des boutons Material
+.mat-mdc-raised-button.mat-primary {
+  --mdc-filled-button-container-color: var(--dz-accent);
+  --mdc-filled-button-label-text-color: #ffffff;
+  border-radius: 25px;
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+// Dialogues et Menus (Popups)
+.mat-mdc-menu-panel, .mat-mdc-dialog-container {
+  --mdc-filled-button-container-shape: var(--dz-radius-md);
+  background-color: var(--dz-surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+// --- SNACKBARS PERSONNALISÉS ---
+
+.success-snackbar {
+  --mdc-snackbar-container-color: #1ed760; // Un vert un peu plus vibrant
+  --mdc-snackbar-label-text-color: #000;
+  border-radius: var(--dz-radius-md);
+  
+  .mat-mdc-snack-bar-label { font-weight: 600; }
+  .mat-mdc-snack-bar-action { color: #000 !important; }
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #ef5464; // Le rouge Deezer
+  --mdc-snackbar-label-text-color: #ffffff;
+  border-radius: var(--dz-radius-md);
+  
+  .mat-mdc-snack-bar-label { font-weight: 600; }
+  .mat-mdc-snack-bar-action { color: #ffffff !important; }
+}
+
+// Scrollbar personnalisée (style discret moderne)
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--dz-bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: #33333d;
+  border-radius: 10px;
+  &:hover { background: #454553; }
+}

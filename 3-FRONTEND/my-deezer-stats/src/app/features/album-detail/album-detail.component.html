@@ -1,0 +1,39 @@
+<div class="detail-container">
+  <ng-container *ngIf="detail() as detailData; else loadingOrNotFound">
+    <header class="item-header">
+      <img *ngIf="detailData.coverUrl" [src]="detailData.coverUrl" [alt]="detailData.name">
+      <div class="header-info">
+        <h1>{{ detailData.name }}</h1>
+        <p class="artist-name">{{ detailData.artist }}</p>
+        <p>Nombre d'écoutes : {{ detailData.count }}</p>
+        <p>Temps d'écoute total : {{ formatListeningTime(detailData.listeningTime) }}</p>
+      </div>
+    </header>
+
+    <section class="tracks-section">
+      <h2>Pistes</h2>
+      <div class="tracks-list">
+        <div *ngFor="let track of detailData.trackDtos; let i = index" class="track-item">
+          <span class="rank">#{{ i + 1 }}</span>
+          <span class="title">{{ track.name }}</span>
+          <span class="count">{{ track.count }} écoutes</span>
+          <span class="time">{{ formatListeningTime(track.listeningTime) }}</span>
+        </div>
+
+        <p *ngIf="!detailData.trackDtos || detailData.trackDtos.length === 0">
+          Aucune piste trouvée pour cet album.
+        </p>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-template #loadingOrNotFound>
+    <ng-container *ngIf="loading(); else notFound">
+      <mat-spinner></mat-spinner>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #notFound>
+    <p>Album non trouvé.</p>
+  </ng-template>
+</div>

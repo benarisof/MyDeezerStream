@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: mydeezer-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydeezerdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./1-DATA:/docker-entrypoint-initdb.d
+    networks:
+      - mydeezer-network
+
+  backend:
+    build:
+      context: ./2-BACKEND/src
+      dockerfile: Dockerfile
+    container_name: mydeezer-backend
+    ports:
+      - "5257:5257"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5257
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=mydeezerdb;Username=myuser;Password=mypassword
+    env_file:
+      - ./2-BACKEND/src/.env
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - mydeezer-network
+
+networks:
+  mydeezer-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

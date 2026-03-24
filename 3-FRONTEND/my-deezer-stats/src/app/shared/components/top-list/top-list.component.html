@@ -1,0 +1,39 @@
+<section class="stats-section" [class.at-start]="isAtStart" [class.at-end]="isAtEnd">
+  <div class="section-header">
+    <h2 class="section-title">
+      <mat-icon class="title-icon">{{ getIcon() }}</mat-icon>
+      {{ title }}
+    </h2>
+
+    <div class="carousel-controls">
+      <button class="nav-btn" [disabled]="isAtStart" (click)="scroll(-500)">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button class="nav-btn" [disabled]="isAtEnd" (click)="scroll(500)">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="carousel-wrapper" #carousel (scroll)="onScroll()">
+    @for (item of items; track $index; let i = $index) {
+      <div class="stat-card" [class.is-artist]="type==='artist'" (click)="navigateToDetail(item)">
+        <div class="cover-container">
+          <div class="rank-badge">#{{ i + 1 }}</div>
+          <div class="image-wrapper">
+            @if (hasCover(item)) {
+              <img [src]="getCover(item)" [alt]="getName(item)" class="cover-image">
+            } @else {
+              <div class="fallback-cover"><mat-icon>{{ getIcon() }}</mat-icon></div>
+            }
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="name">{{ getName(item) }}</span>
+          @if (getArtist(item); as artist) { <span class="sub-name">{{ artist }}</span> }
+          <span class="count">{{ getPlayCount(item) }} écoutes</span>
+        </div>
+      </div>
+    }
+  </div>
+</section>

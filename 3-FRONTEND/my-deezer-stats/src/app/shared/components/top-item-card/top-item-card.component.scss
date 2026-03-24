@@ -1,0 +1,151 @@
+/* ==========================
+   CARD CONTAINER
+========================== */
+
+.dz-card {
+  background: var(--dz-surface);
+  border-radius: var(--dz-radius-lg);
+  padding: 16px;
+  cursor: pointer;
+  transition: var(--dz-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.dz-card:hover {
+  background: var(--dz-surface-hover);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* ==========================
+   COVER
+========================== */
+
+.cover-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--dz-radius-md);
+  overflow: hidden;
+}
+
+.cover-wrapper img,
+.cover-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--dz-radius-md);
+}
+
+.cover-fallback {
+  background: linear-gradient(135deg, #2a2a35, #1d1d26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-fallback mat-icon {
+  font-size: 48px;
+  color: var(--dz-text-secondary);
+}
+
+/* Overlay gradient */
+
+.cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(18,18,22,0.8) 10%,
+    rgba(18,18,22,0.2) 50%,
+    transparent
+  );
+  opacity: 0;
+  transition: var(--dz-transition);
+}
+
+.dz-card:hover .cover-overlay {
+  opacity: 1;
+}
+
+/* ==========================
+   PLAY BUTTON
+========================== */
+
+.play-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--dz-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px rgba(162, 56, 255, 0.5);
+  transform: translateY(20px);
+  opacity: 0;
+  transition: var(--dz-transition);
+}
+
+.dz-card:hover .play-btn {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.play-btn:hover {
+  transform: scale(1.05);
+}
+
+/* ==========================
+   RANK BADGE
+========================== */
+
+.rank-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* ==========================
+   CONTENT
+========================== */
+
+.content {
+  margin-top: 14px;
+}
+
+.item-name {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-sub {
+  font-size: 0.85rem;
+  color: var(--dz-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-count {
+  font-size: 0.8rem;
+  margin-top: 6px;
+  color: var(--dz-accent);
+  font-weight: 600;
+}

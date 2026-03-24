@@ -1,0 +1,119 @@
+:host {
+  --dz-violet: #a238ff;
+  --card-size: 180px;
+  --page-margin: 3rem;
+}
+
+.stats-section {
+  position: relative;
+  padding: 1.5rem 0;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--page-margin);
+    margin-bottom: 1.5rem;
+
+    .section-title {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0;
+      .title-icon { color: var(--dz-violet); }
+    }
+
+    .carousel-controls .nav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-left: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      &:disabled { opacity: 0.2; cursor: default; }
+      &:hover:not(:disabled) { border-color: var(--dz-violet); background: rgba(255, 255, 255, 0.1); }
+    }
+  }
+
+  .carousel-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0 var(--page-margin) 1.5rem var(--page-margin);
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+
+    // Masque par défaut (flou des deux côtés)
+    mask-image: linear-gradient(to right, transparent, black 120px, black calc(100% - 120px), transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 120px, black calc(100% - 120px), transparent);
+
+    .stat-card {
+      flex: 0 0 var(--card-size);
+      width: var(--card-size);
+      max-width: var(--card-size); // Sécurité anti-régression
+      cursor: pointer;
+
+      .image-wrapper {
+        width: var(--card-size);
+        height: var(--card-size);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #1e1e22;
+        margin-bottom: 12px;
+        transition: transform 0.3s ease;
+        img { width: 100%; height: 100%; object-fit: cover; }
+      }
+
+      &.is-artist .image-wrapper { border-radius: 50%; }
+      &:hover .image-wrapper { transform: translateY(-5px); }
+
+      .card-info {
+        .name { color: white; font-weight: 700; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sub-name { color: #888; font-size: 0.85rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .count { color: var(--dz-violet); font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block; }
+      }
+    }
+
+    .rank-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+  }
+
+  // --- LOGIQUE DE MASQUE FIXÉE ---
+  
+  // Au début : On masque le flou à gauche (black 0%)
+  &.at-start .carousel-wrapper {
+    mask-image: linear-gradient(to right, black 0%, black calc(100% - 120px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 0%, black calc(100% - 120px), transparent 100%);
+  }
+
+  // À la fin : On masque le flou à droite (black 100%)
+  &.at-end .carousel-wrapper {
+    mask-image: linear-gradient(to right, transparent 0%, black 120px, black 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 120px, black 100%);
+  }
+
+  // Si pas de scroll possible : Pas de masque
+  &.at-start.at-end .carousel-wrapper {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+}
