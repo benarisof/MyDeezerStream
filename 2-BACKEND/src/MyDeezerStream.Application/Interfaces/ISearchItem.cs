@@ -9,8 +9,8 @@ namespace MyDeezerStream.Application.Interfaces
 {
     public interface ISearchItem
     {
-        Task<AlbumDto> GetAlbumDetailsAsync(string albumName, string artistName, int days);
-        Task<ArtistDto> GetArtistDetailsAsync(string artistName, int days);
+        Task<AlbumDto> GetAlbumDetailsAsync(string albumName, string artistName, int days, string? range);
+        Task<ArtistDto> GetArtistDetailsAsync(string artistName, int days, string? range);
         Task<List<SearchSuggestionDto>> SearchAsync(string query);
     }
 }

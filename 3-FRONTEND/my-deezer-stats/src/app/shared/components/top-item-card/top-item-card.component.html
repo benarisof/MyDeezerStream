@@ -1,7 +1,10 @@
 <div class="dz-card" (click)="navigateToDetail()">
 
-  <!-- COVER -->
-  <div class="cover-wrapper">
+      <div class="rank-badge">
+      #{{ rank }}
+    </div>
+
+  <div class="cover-wrapper" [class.is-artist]="type === 'artist'">
 
     <ng-container *ngIf="item?.coverUrl; else fallback">
       <img [src]="item.coverUrl" [alt]="itemName" />
@@ -13,24 +16,17 @@
       </div>
     </ng-template>
 
-    <!-- Rank badge -->
-    <div class="rank-badge">
-      #{{ rank }}
-    </div>
 
-    <!-- Play button -->
+
     <button class="play-btn" (click)="$event.stopPropagation()">
       <mat-icon>play_arrow</mat-icon>
     </button>
 
-    <!-- Gradient overlay -->
     <div class="cover-overlay"></div>
 
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
-
     <div class="item-name" [title]="itemName">
       {{ itemName }}
     </div>
@@ -42,7 +38,5 @@
     <div class="item-count">
       {{ item?.count }} écoutes
     </div>
-
   </div>
-
 </div>

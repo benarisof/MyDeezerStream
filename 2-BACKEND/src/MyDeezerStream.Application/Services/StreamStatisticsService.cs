@@ -21,19 +21,41 @@ public class StreamStatisticsService : IStreamStatisticsService
         _deezerApiService = deezerApiService;
     }
 
-    public async Task<List<TopArtistDto>> GetTopArtistsAsync(int limit, int days)
+    /// <summary>
+    /// Calcule la plage de dates en fonction des jours ou du range nommé.
+    /// Retourne un tuple (DateDébut, DateFin).
+    /// </summary>
+    private (DateTime? start, DateTime? end) GetDateRange(int days, string? range)
+    {
+        if (!string.IsNullOrEmpty(range))
+        {
+            var now = DateTime.UtcNow;
+            if (range == "this_year")
+            {
+                return (new DateTime(now.Year, 1, 1), now);
+            }
+            if (range == "last_year")
+            {
+                var lastYear = now.Year - 1;
+                return (new DateTime(lastYear, 1, 1), new DateTime(lastYear, 12, 31, 23, 59, 59));
+            }
+        }
+
+        // Si pas de range, on retombe sur la logique "days" (glissant)
+        DateTime? since = days > 0 ? DateTime.UtcNow.AddDays(-days) : null;
+        return (since, null);
+    }
+
+    public async Task<List<TopArtistDto>> GetTopArtistsAsync(int limit, int days, string? range = null)
     {
         var user = await _currentUserManager.GetCurrentUserAsync();
+        var (start, end) = GetDateRange(days, range);
 
-        // MODIFICATION : Si days vaut -1 (paramètre 'all'), since devient null.
-        DateTime? since = days > 0 ? DateTime.UtcNow.AddDays(-days) : null;
+        // Note: Il faudra s'assurer que le Repository accepte désormais 'end' en paramètre optionnel
+        var results = await _streamRepository.GetTopArtistsAsync(user.Id, limit, start, end);
 
-        var results = await _streamRepository.GetTopArtistsAsync(user.Id, limit, since);
-
-        // 1. Isoler ceux qui n'ont pas de cover
         var missingCovers = results.Where(r => string.IsNullOrEmpty(r.CoverUrl)).ToList();
 
-        // 2. Lancer les appels à l'API Deezer en PARALLÈLE
         var fetchTasks = missingCovers.Select(async r =>
         {
             var url = await _deezerApiService.GetArtistCoverAsync(r.ArtistName);
@@ -42,39 +64,34 @@ public class StreamStatisticsService : IStreamStatisticsService
 
         var fetchedResults = await Task.WhenAll(fetchTasks);
 
-        // On crée un dictionnaire rapide pour retrouver les nouvelles URL
         var newCoversDict = fetchedResults
             .Where(x => !string.IsNullOrEmpty(x.Url))
             .ToDictionary(x => x.ArtistId, x => x.Url);
 
-        // 3. Mettre à jour la BDD SÉQUENTIELLEMENT (car le DbContext n'est pas thread-safe)
         foreach (var newCover in newCoversDict)
         {
             await _streamRepository.UpdateArtistCoverAsync(newCover.Key, newCover.Value!);
         }
 
-        // 4. Mapper vers les DTO finaux
         return results.Select(r => new TopArtistDto
         {
             Artist = r.ArtistName,
             Count = r.Count,
-            // On prend la cover en BDD, ou la nouvelle si on vient de la fetcher
             CoverUrl = !string.IsNullOrEmpty(r.CoverUrl) ? r.CoverUrl : newCoversDict.GetValueOrDefault(r.ArtistId)
         }).ToList();
     }
 
-    public async Task<List<TopTrackDto>> GetTopTracksAsync(int limit, int days)
+    public async Task<List<TopTrackDto>> GetTopTracksAsync(int limit, int days, string? range = null)
     {
         var user = await _currentUserManager.GetCurrentUserAsync();
-        DateTime? since = days > 0 ? DateTime.UtcNow.AddDays(-days) : null;
+        var (start, end) = GetDateRange(days, range);
 
-        var results = await _streamRepository.GetTopTracksAsync(user.Id, limit, since);
+        var results = await _streamRepository.GetTopTracksAsync(user.Id, limit, start, end);
 
         var missingCovers = results.Where(r => string.IsNullOrEmpty(r.CoverUrl)).ToList();
 
         var fetchTasks = missingCovers.Select(async r =>
         {
-            // On peut passer l'artiste pour affiner la recherche sur l'API Deezer
             var url = await _deezerApiService.GetTrackCoverAsync(r.TrackName, r.ArtistNames);
             return new { r.TrackId, Url = url };
         });
@@ -99,12 +116,12 @@ public class StreamStatisticsService : IStreamStatisticsService
         }).ToList();
     }
 
-    public async Task<List<TopAlbumDto>> GetTopAlbumsAsync(int limit, int days)
+    public async Task<List<TopAlbumDto>> GetTopAlbumsAsync(int limit, int days, string? range = null)
     {
         var user = await _currentUserManager.GetCurrentUserAsync();
-        DateTime? since = days > 0 ? DateTime.UtcNow.AddDays(-days) : null;
+        var (start, end) = GetDateRange(days, range);
 
-        var results = await _streamRepository.GetTopAlbumsAsync(user.Id, limit, since);
+        var results = await _streamRepository.GetTopAlbumsAsync(user.Id, limit, start, end);
 
         var missingCovers = results.Where(r => string.IsNullOrEmpty(r.CoverUrl)).ToList();
 
@@ -136,20 +153,14 @@ public class StreamStatisticsService : IStreamStatisticsService
 
     public async Task<List<RawStreamDto>> GetLastStreamAsync(int limit)
     {
-        // 1. Récupérer l'utilisateur courant
         var user = await _currentUserManager.GetCurrentUserAsync();
-
-        // 2. Récupérer les streams via le repository 
-        // (La méthode existante GetStreamsAsync trie déjà par OrderByDescending(s => s.PlayedAt))
         var streams = await _streamRepository.GetStreamsAsync(user.Id);
 
-        // 3. Mapper vers RawStreamDto en respectant la limite
         return streams
             .Take(limit)
             .Select(s => new RawStreamDto
             {
                 SongTitle = s.Track.TrackName,
-                // On concatène les artistes s'il y en a plusieurs (ex: "Artiste A, Artiste B")
                 Artist = string.Join(", ", s.Track.TrackArtists.Select(ta => ta.Artist.ArtistName)),
                 AlbumTitle = s.Track.Album?.AlbumName ?? "Single",
                 ListeningTime = s.ListeningTime,

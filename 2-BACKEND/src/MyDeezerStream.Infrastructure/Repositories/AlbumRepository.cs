@@ -36,25 +36,38 @@ public class AlbumRepository : IAlbumRepository
                 && a.Tracks.Any(t => t.TrackArtists.Any(ta => EF.Functions.ILike(ta.Artist.ArtistName, artistName))));
     }
 
-    public async Task<List<TrackStat>> GetTrackStatsForAlbumAsync(int albumId, int userId, DateTime? since)
+    public async Task<List<TrackStat>> GetTrackStatsForAlbumAsync(int albumId, int userId, DateTime? from, DateTime? to)
     {
         var query = _context.Streams
             .Where(s => s.UserId == userId)
-            .Where(s => s.Track.AlbumId == albumId)
-            .Where(s => !since.HasValue || s.PlayedAt >= since.Value)
+            .Where(s => s.Track.AlbumId == albumId);
+
+        // Filtrage par date de début
+        if (from.HasValue)
+        {
+            var utcFrom = from.Value.ToUniversalTime();
+            query = query.Where(s => s.PlayedAt >= utcFrom);
+        }
+
+        // Filtrage par date de fin (Nouveau)
+        if (to.HasValue)
+        {
+            var utcTo = to.Value.ToUniversalTime();
+            query = query.Where(s => s.PlayedAt <= utcTo);
+        }
+
+        return await query
             .GroupBy(s => s.TrackId)
             .Select(g => new TrackStat
             {
                 TrackId = g.Key,
                 TrackName = g.First().Track.TrackName,
                 AlbumName = g.First().Track.Album!.AlbumName,
-
                 Count = g.Count(),
                 TotalListeningTime = g.Sum(s => (int?)s.ListeningTime) ?? 0
             })
-            .OrderByDescending(ts => ts.Count);
-
-        return await query.ToListAsync();
+            .OrderByDescending(ts => ts.Count)
+            .ToListAsync();
     }
 
     public async Task UpdateCoverAsync(int albumId, string coverUrl)

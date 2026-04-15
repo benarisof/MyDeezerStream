@@ -23,10 +23,33 @@ namespace MyDeezerStream.Application.Services
             _deezerApiService = deezerApiService;
         }
 
-        public async Task<ArtistDto> GetArtistDetailsAsync(string artistName, int days)
+        /// <summary>
+        /// Calcule la plage de dates (identique à celle du StreamStatisticsService)
+        /// </summary>
+        private (DateTime? start, DateTime? end) GetDateRange(int days, string? range)
+        {
+            if (!string.IsNullOrEmpty(range))
+            {
+                var now = DateTime.UtcNow;
+                if (range == "this_year")
+                {
+                    return (new DateTime(now.Year, 1, 1), now);
+                }
+                if (range == "last_year")
+                {
+                    var lastYear = now.Year - 1;
+                    return (new DateTime(lastYear, 1, 1), new DateTime(lastYear, 12, 31, 23, 59, 59));
+                }
+            }
+
+            DateTime? since = days > 0 ? DateTime.UtcNow.AddDays(-days) : null;
+            return (since, null);
+        }
+
+        public async Task<ArtistDto> GetArtistDetailsAsync(string artistName, int days, string? range)
         {
             var user = await _currentUserManager.GetCurrentUserAsync();
-            DateTime? since = days > 0 ? DateTime.UtcNow.AddDays(-days) : null;
+            var (start, end) = GetDateRange(days, range);
 
             var artist = await _artistRepository.GetByNameAsync(artistName);
             if (artist == null)
@@ -34,7 +57,8 @@ namespace MyDeezerStream.Application.Services
                 throw new KeyNotFoundException($"Artist '{artistName}' not found.");
             }
 
-            var trackStats = await _artistRepository.GetTrackStatsForArtistAsync(artist.ArtistId, user.Id, since);
+            // Note: Update de la signature du repo nécessaire pour accepter 'end'
+            var trackStats = await _artistRepository.GetTrackStatsForArtistAsync(artist.ArtistId, user.Id, start, end);
 
             string? coverUrl = artist.CoverUrl;
             if (string.IsNullOrEmpty(coverUrl))
@@ -50,7 +74,7 @@ namespace MyDeezerStream.Application.Services
             {
                 Name = artist.ArtistName,
                 Count = trackStats.Sum(ts => ts.Count),
-                ListeningTime = trackStats.Sum(ts => ts.TotalListeningTime), 
+                ListeningTime = trackStats.Sum(ts => ts.TotalListeningTime),
                 CoverUrl = coverUrl ?? string.Empty,
                 trackDtos = trackStats.Select(ts => new TrackDto
                 {
@@ -63,10 +87,10 @@ namespace MyDeezerStream.Application.Services
         }
 
 
-        public async Task<AlbumDto> GetAlbumDetailsAsync(string albumName, string artistName, int days)
+        public async Task<AlbumDto> GetAlbumDetailsAsync(string albumName, string artistName, int days, string? range)
         {
             var user = await _currentUserManager.GetCurrentUserAsync();
-            DateTime? since = days > 0 ? DateTime.UtcNow.AddDays(-days) : null;
+            var (start, end) = GetDateRange(days, range);
 
             var album = await _albumRepository.GetByNameAndArtistAsync(albumName, artistName);
             if (album == null)
@@ -74,7 +98,8 @@ namespace MyDeezerStream.Application.Services
                 throw new KeyNotFoundException($"Album '{albumName}' by '{artistName}' not found.");
             }
 
-            var trackStats = await _albumRepository.GetTrackStatsForAlbumAsync(album.AlbumId, user.Id, since);
+            // Note: Update de la signature du repo nécessaire pour accepter 'end'
+            var trackStats = await _albumRepository.GetTrackStatsForAlbumAsync(album.AlbumId, user.Id, start, end);
 
             string? coverUrl = album.CoverUrl;
             if (string.IsNullOrEmpty(coverUrl))
@@ -93,14 +118,13 @@ namespace MyDeezerStream.Application.Services
                 Count = trackStats.Sum(ts => ts.Count),
                 ListeningTime = trackStats.Sum(ts => ts.TotalListeningTime),
                 CoverUrl = coverUrl ?? string.Empty,
-                //ReleaseDate = album.ReleaseDate,
-                trackDtos = [.. trackStats.Select(ts => new TrackDto
+                trackDtos = trackStats.Select(ts => new TrackDto
                 {
                     Name = ts.TrackName,
                     Album = ts.AlbumName,
                     ListeningTime = ts.TotalListeningTime,
                     Count = ts.Count
-                })]
+                }).ToList()
             };
         }
 

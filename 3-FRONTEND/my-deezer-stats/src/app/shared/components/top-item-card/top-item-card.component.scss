@@ -30,6 +30,19 @@
   overflow: hidden;
 }
 
+.cover-wrapper.is-artist {
+  border-radius: 50%; /* Devient un rond */
+  
+  img, .cover-fallback {
+    border-radius: 50%;
+  }
+
+  /* Optionnel : on ajuste souvent l'overlay pour les formes rondes */
+  .cover-overlay {
+    border-radius: 50%;
+  }
+}
+
 .cover-wrapper img,
 .cover-fallback {
   width: 100%;
@@ -105,19 +118,37 @@
    RANK BADGE
 ========================== */
 
+
 .rank-badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0,0,0,0.6);
+  /* 16px (padding de la carte) + 8px d'écart = 24px */
+  top: 24px;
+  left: 24px;
+  
+  /* CRUCIAL : Doit être supérieur au cover-wrapper */
+  z-index: 10; 
+  
+  background: rgba(0, 0, 0, 0.7); /* Un peu plus sombre pour le contraste */
   backdrop-filter: blur(6px);
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
   color: white;
+  
+  /* Empêche le badge de bloquer le clic sur la carte */
+  pointer-events: none; 
 }
 
+/* S'assurer que le wrapper ne dépasse pas le badge */
+.cover-wrapper {
+  position: relative;
+  z-index: 1; /* Inférieur au badge */
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--dz-radius-md);
+  overflow: hidden;
+}
 /* ==========================
    CONTENT
 ========================== */

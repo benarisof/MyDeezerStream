@@ -9,9 +9,9 @@ namespace MyDeezerStream.Application.Interfaces
 {
     public interface IStreamStatisticsService
     {
-        Task<List<TopArtistDto>> GetTopArtistsAsync(int limit, int days);
-        Task<List<TopTrackDto>> GetTopTracksAsync(int limit, int days);
-        Task<List<TopAlbumDto>> GetTopAlbumsAsync(int limit, int days);
+        Task<List<TopArtistDto>> GetTopArtistsAsync(int limit, int days, string? range);
+        Task<List<TopTrackDto>> GetTopTracksAsync(int limit, int days, string? range);
+        Task<List<TopAlbumDto>> GetTopAlbumsAsync(int limit, int days, string? range);
         Task<List<RawStreamDto>> GetLastStreamAsync(int limit);
     }
 }
