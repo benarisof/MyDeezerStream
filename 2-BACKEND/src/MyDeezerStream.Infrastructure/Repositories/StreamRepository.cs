@@ -107,6 +107,7 @@ public class StreamRepository : IStreamRepository
         });
     }
 
+    
     public async Task<IEnumerable<TopAlbumResult>> GetTopAlbumsAsync(int userId, int limit = 10, DateTime? since = null)
     {
         var baseQuery = _context.Streams.Where(s => s.UserId == userId);
@@ -138,18 +139,26 @@ public class StreamRepository : IStreamRepository
 
         var albumIds = topAlbumsStats.Select(a => a.AlbumId).ToList();
 
-        var artistsLookup = await _context.Tracks
+        // 1. On récupère les paires (AlbumId, ArtistName) pour tous les albums concernés
+        var albumArtistsData = await _context.TrackArtists
             .AsNoTracking()
-            .Where(t => t.AlbumId != null && albumIds.Contains(t.AlbumId.Value))
-            .Select(t => new
+            .Where(ta => ta.Track.AlbumId != null && albumIds.Contains(ta.Track.AlbumId.Value))
+            .Select(ta => new
             {
-                t.AlbumId,
-                ArtistName = t.TrackArtists.OrderBy(ta => ta.ArtistId).Select(ta => ta.Artist.ArtistName).FirstOrDefault()
+                AlbumId = ta.Track.AlbumId!.Value,
+                ArtistName = ta.Artist.ArtistName
             })
+            .ToListAsync();
+
+        // 2. On groupe en mémoire pour trouver l'artiste qui apparaît le plus souvent par album
+        var artistsLookup = albumArtistsData
             .GroupBy(x => x.AlbumId)
-            .ToDictionaryAsync(
-                g => g.Key!.Value,
-                g => g.FirstOrDefault()?.ArtistName ?? "Artiste Inconnu"
+            .ToDictionary(
+                g => g.Key,
+                g => g.GroupBy(x => x.ArtistName) // On regroupe par nom d'artiste dans cet album
+                      .OrderByDescending(artistGroup => artistGroup.Count()) // On trie par nombre d'apparitions
+                      .Select(artistGroup => artistGroup.Key)
+                      .FirstOrDefault() ?? "Artiste Inconnu"
             );
 
         return topAlbumsStats.Select(a => new TopAlbumResult(

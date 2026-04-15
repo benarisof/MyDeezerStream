@@ -10,10 +10,9 @@ namespace MyDeezerStream.Application.DTOs
     public class SearchSuggestionDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? Artist { get; set; }
-        public string? Album { get; set; }
+        public string DisplayName { get; set; } = string.Empty; // Nom de l'album ou de l'artiste
+        public string? Subtitle { get; set; }    // Nom de l'artiste (si c'est un album)
         public string? CoverUrl { get; set; }
-        public string Type { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty; // "artist" ou "album"
     }
 }

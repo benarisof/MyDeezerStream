@@ -94,53 +94,46 @@ namespace MyDeezerStream.Application.Services
                 ListeningTime = trackStats.Sum(ts => ts.TotalListeningTime),
                 CoverUrl = coverUrl ?? string.Empty,
                 //ReleaseDate = album.ReleaseDate,
-                trackDtos = trackStats.Select(ts => new TrackDto
+                trackDtos = [.. trackStats.Select(ts => new TrackDto
                 {
                     Name = ts.TrackName,
                     Album = ts.AlbumName,
                     ListeningTime = ts.TotalListeningTime,
                     Count = ts.Count
-                }).ToList()
+                })]
             };
         }
 
         public async Task<List<SearchSuggestionDto>> SearchAsync(string query)
         {
             if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
-                return new List<SearchSuggestionDto>();
+                return [];
 
-            // Récupération depuis les repos (projections)
             var albumProjections = await _albumRepository.SearchAlbumsAsync(query);
             var artistProjections = await _artistRepository.SearchArtistsAsync(query);
 
-            // Mapping vers DTO
-            var albumSuggestions = albumProjections
-                .Select(a => new SearchSuggestionDto
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    Artist = a.Artist,
-                    Type = "album",
-                    CoverUrl = a.CoverUrl
-                })
-                .ToList();
+            var albumSuggestions = albumProjections.Select(a => new SearchSuggestionDto
+            {
+                Id = a.Id,
+                DisplayName = a.Name,
+                Subtitle = a.Artist,
+                Type = "album",
+                CoverUrl = a.CoverUrl
+            });
 
-            var artistSuggestions = artistProjections
-                .Select(a => new SearchSuggestionDto
-                {
-                    Id = a.Id,
-                    Artist = a.Name,
-                    Type = "artist",
-                    CoverUrl = a.CoverUrl
-                })
-                .ToList();
+            var artistSuggestions = artistProjections.Select(a => new SearchSuggestionDto
+            {
+                Id = a.Id,
+                DisplayName = a.Name,
+                Subtitle = "Artiste",
+                Type = "artist",
+                CoverUrl = a.CoverUrl
+            });
 
-            // Fusion et tri
-            return albumSuggestions
-                .Concat(artistSuggestions)
-                .OrderByDescending(s => s.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
-                .ThenBy(s => s.Name)
-                .ToList();
+            return [.. artistSuggestions
+                .Concat(albumSuggestions)
+                .OrderByDescending(s => s.DisplayName.StartsWith(query, StringComparison.OrdinalIgnoreCase))
+                .ThenBy(s => s.DisplayName)];
         }
     }
 }

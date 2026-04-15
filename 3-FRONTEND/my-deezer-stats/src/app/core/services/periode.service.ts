@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-export type PeriodOption = 7 | 30 | 90 | 180 | 365 | "all";
+export type PeriodOption = 30 | 90 | 180 | 365 | "all";
 
 @Injectable({
   providedIn: 'root'

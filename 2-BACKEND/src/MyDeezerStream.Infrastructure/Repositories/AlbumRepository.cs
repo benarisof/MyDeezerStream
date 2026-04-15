@@ -77,10 +77,11 @@ public class AlbumRepository : IAlbumRepository
                 Id = a.AlbumId,
                 Name = a.AlbumName,
                 CoverUrl = a.CoverUrl,
-                Artist = a.Tracks
-                          .SelectMany(t => t.TrackArtists)
-                          .Select(ta => ta.Artist.ArtistName)
-                          .FirstOrDefault() ?? "Inconnu" // Premier artiste lié à une piste
+                // On prend l'artiste le plus présent ou le premier lié
+                Artist = _context.TrackArtists
+                    .Where(ta => ta.Track.AlbumId == a.AlbumId)
+                    .Select(ta => ta.Artist.ArtistName)
+                    .FirstOrDefault() ?? "Inconnu"
             })
             .Take(5)
             .ToListAsync();

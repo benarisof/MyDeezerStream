@@ -205,28 +205,10 @@ try
 
     // Mapper les contrôleurs existants
     app.MapControllers();
-
-    // --- ENDPOINTS DE TEST ULTRA-SIMPLES (SANS DÉPENDANCES) ---
-    app.MapGet("/", () => "Hello World!");
-    app.MapGet("/ping", () => "pong");
-    app.MapGet("/simple", () => Results.Ok(new { message = "OK", time = DateTime.Now }));
-
-    Console.WriteLine("[OK] Démarrage de l'application...");
-    Console.WriteLine("Endpoints disponibles:");
-    Console.WriteLine("  - GET /");
-    Console.WriteLine("  - GET /ping");
-    Console.WriteLine("  - GET /simple");
-    Console.WriteLine("  - GET /api/health (via contrôleur)");
-    await Console.Out.FlushAsync();
-
     app.Run();
 }
 catch (Exception ex)
 {
-    Console.WriteLine("!!!!!!!!!! ERREUR FATALE AU DÉMARRAGE !!!!!!!!!!");
-    Console.WriteLine($"[ERREUR FATALE] Type: {ex.GetType().Name}");
-    Console.WriteLine($"[ERREUR FATALE] Message: {ex.Message}");
-    Console.WriteLine($"[ERREUR FATALE] Stack: {ex.StackTrace}");
     if (ex.InnerException != null)
     {
         Console.WriteLine($"[ERREUR FATALE] Inner: {ex.InnerException.Message}");
