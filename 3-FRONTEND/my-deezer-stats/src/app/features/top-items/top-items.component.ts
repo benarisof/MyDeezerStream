@@ -88,13 +88,13 @@ export class TopItemsComponent {
     let request$;
     switch (type) {
       case 'artist':
-        request$ = this.statsService.getTopArtists(50, period);
+        request$ = this.statsService.getTopArtists(100, period);
         break;
       case 'album':
-        request$ = this.statsService.getTopAlbums(50, period);
+        request$ = this.statsService.getTopAlbums(100, period);
         break;
       case 'track':
-        request$ = this.statsService.getTopTracks(50, period);
+        request$ = this.statsService.getTopTracks(100, period);
         break;
     }
 
